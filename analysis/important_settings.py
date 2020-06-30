@@ -3,6 +3,7 @@
 import numpy as np
 import os
 import time
+import getpass
 
 bird = """
        _.--.__                                             _.--.
@@ -33,12 +34,12 @@ banner = """
 """
 
 high_score = """
- _   _ _       _       ____                     _ 
-| | | (_) __ _| |__   / ___|  ___ ___  _ __ ___| |
-| |_| | |/ _` | '_ \  \___ \ / __/ _ \| '__/ _ \ |
-|  _  | | (_| | | | |  ___) | (_| (_) | | |  __/_|
-|_| |_|_|\__, |_| |_| |____/ \___\___/|_|  \___(_)
-         |___/                                    
+   _   _ _       _       ____                     _ 
+  | | | (_) __ _| |__   / ___|  ___ ___  _ __ ___| |
+  | |_| | |/ _` | '_ \  \___ \ / __/ _ \| '__/ _ \ |
+  |  _  | | (_| | | | |  ___) | (_| (_) | | |  __/_|
+  |_| |_|_|\__, |_| |_| |____/ \___\___/|_|  \___(_)
+           |___/                                    
 """
 
 plane = """
@@ -93,6 +94,32 @@ def high_performance_flight_simulator():
 
     time.sleep(0.85)
     os.system('clear')
-    print(high_score)
 
-    print(5*" " + "You've won with {} points!\n".format(np.random.randint(100, 5000)))
+    score = np.random.randint(100, 5000)
+
+    try:
+        with open("important_config.boat", "r") as f:
+            current_hs = f.readline()
+            current_hs_holder = f.readline()
+    except IOError:
+        current_hs = "2500"
+        current_hs_holder = "River" 
+
+    if not current_hs[:-2].isnumeric():
+        print("Not numeric")
+        current_hs = 2500
+        current_hs_holder = "River"
+    else:
+        current_hs = int(current_hs)
+
+    if score > current_hs:
+        print(high_score)
+        print(2*" " + "You've got the high score with {} points, "
+              "and displaced {}!\n".format(score, current_hs_holder))
+
+        with open("important_config.boat", "w") as f:
+            f.write(str(score) + "\n")
+            f.write(getpass.getuser())
+    else:
+        print(5*" " + "HIGH SCORE: {} - {}".format(current_hs_holder, current_hs))
+        print(5*" " + "You've won with {} points! Try again?\n".format(score))

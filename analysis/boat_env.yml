@@ -1,0 +1,11 @@
+name: boat_env
+channels:
+  - etetoolkit
+  - anaconda
+dependencies:
+  - python>=3.3
+  - scipy>=1.1.0
+  - joblib>=0.12.2
+  - jupyter>=1.0.0
+  - ete3>=3.1.1
+  - matplotlib>=2.2.3

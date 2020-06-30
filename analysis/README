@@ -1,0 +1,49 @@
+Tue 30 Jun 2020 01:14:13 PM MDT
+
+1. Please download conda if you don't have it yet. This tool will allow you to
+easily download all of the necessary dependencies. You can get it from this
+page:
+
+https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html
+
+2. Enter the directory in which this file resides
+
+3. Use conda to create an environment with all of the necessary dependencies
+(listed in boat_env.yml):
+
+   $ conda env create -f boat_env.yml
+
+4. Activate the environment:
+
+   $ conda activate boat_env
+
+5. Run the code with a small (<6) number of pulses!
+
+   $ python run_analysis.py <# of pulses>
+
+   (e.g. $ python run_analysis.py 2)
+
+Note: this program will use all of your cores and could make your system
+sluggish. To avoid this, prepend the above with the "nice" command, which
+will run the code with lower priority:
+
+   $ nice python run_analysis.py <# of pulses>
+
+6. A summary of the analysis will be generated to a file called
+
+   all_analyses_<# of pulses>pulses_<signature>.<signature>_output.dat
+
+   (e.g. all_analyses_0pulses_1593543779.9746473_output.dat)
+
+The signature changes from run to run, and is there for avoiding overwriting
+files.
+
+7. For each trait for which the pulse model is preferred (DeltaAICc < -2), the
+code generates figures (with the file extension .png) similar to the ones
+described in the manuscript SI. Each figure's filename contains the signature
+of the summary file.
+
+8. All of the data used in the analysis is stored as a Python pickle file with file
+extension .p. You can safely remove it, but please send it over if you find a bug!
+
+9. Please email us if you have any questions.
