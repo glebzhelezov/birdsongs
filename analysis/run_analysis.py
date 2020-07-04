@@ -237,8 +237,15 @@ for analysis_index_i in range(len(all_analyses)):
 
 
 
-            _f = boat.configuration_likelihood_neg_log_lkl_fun(
-                boat.Models.PULSE_MU,
+            #_f = boat.configuration_likelihood_neg_log_lkl_fun(
+            #    boat.Models.PULSE_MU,
+            #    data,
+            #    tree,
+            #    leaves,
+            #    pulse_config,
+            #    error_variances=errors
+            #)
+            _f = boat.pulse_negloglkl_fun(
                 data,
                 tree,
                 leaves,
@@ -249,7 +256,7 @@ for analysis_index_i in range(len(all_analyses)):
             # Draw the likelihood surface
             fig = plt.figure()
             if len(pulse_config) > 0:
-                _vf = np.vectorize(lambda x,y:np.exp(-_f([x,y])))
+                _vf = np.vectorize(lambda x,y:np.exp(-_f(x,y)))
                 x = np.linspace(1e-10, 0.04, 80)
                 y = np.linspace(1e-10, 1, 80)
                 X,Y = np.meshgrid(x, y)
@@ -284,7 +291,7 @@ for analysis_index_i in range(len(all_analyses)):
             # Draw the mu(Sigma) surface
             fig = plt.figure()
             if len(pulse_config) > 0:
-                _vf = np.vectorize(lambda x,y:_f([x,y], True)[1])
+                _vf = np.vectorize(lambda x,y:_f(x,y, True)[1])
                 x = np.linspace(1e-10, 0.04, 80)
                 y = np.linspace(1e-10, 1, 80)
                 X,Y = np.meshgrid(x, y)
