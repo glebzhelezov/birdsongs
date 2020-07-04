@@ -9,22 +9,22 @@ Please direct questions and comments to Gleb Zhelezov and Jay McEntee.
 
 #         ((
 #         \\``.
-#         \_`.``-. 
-#         ( `.`.` `._  
-#          `._`-.    `._ 
-#            \`--.   ,' `. 
-#             `--._  `.  .`. 
-#              `--.--- `. ` `. 
-#              `.--  `;  .`._ 
+#         \_`.``-.
+#         ( `.`.` `._
+#          `._`-.    `._
+#            \`--.   ,' `.
+#             `--._  `.  .`.
+#              `--.--- `. ` `.
+#              `.--  `;  .`._
 #                :-   :   ;. `.__,.,__ __    First one in the family!
 #                 `\  :       ,-(     ';o`>.  /
 #                   `-.`:   ,'   `._ .:  (,-`,
-#                  \    ;      ;.  ,: 
+#                  \    ;      ;.  ,:
 #                  ,"`-._>-:        ;,'  `---.,---.
 #                  `>'"  "-`       ,'   "":::::".. `-.
 #                   `;"'_,  (\`\ _ `:::::::::::'"     `---.
 #               -hrr-    `-(_,' -'),)\`.       _      .::::"'  `----._,-"")
-#                    \_,': `.-' `-----' `--;-.   `.   ``.`--.____/ 
+#                    \_,': `.-' `-----' `--;-.   `.   ``.`--.____/
 #                      `-^--'                \(-.  `.``-.`-=:-.__)
 #                                         `  `.`.`._`.-._`--.)
 #                                              `-^---^--.`--
@@ -40,12 +40,12 @@ Please direct questions and comments to Gleb Zhelezov and Jay McEntee.
 #            |        \     .' ./
 #            |   _.,-~"\  .',/~'
 #            <-~"   _.,-~" ~ |
-#^"~-,._.,-~"^"~-,._\       /,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
-#~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-
-#^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
-#~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._
+# ^"~-,._.,-~"^"~-,._\       /,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
+# ~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-
+# ^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
+# ~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._
 #
-#(ASCII art found online.)
+# (ASCII art found online.)
 
 
 import numpy as np
@@ -62,6 +62,7 @@ from csv import reader
 from enum import Enum, auto
 from datetime import datetime
 from numbers import Number
+
 
 def number_leaves(in_tree):
     """Number the leaves, count their total number, and create a list.
@@ -171,12 +172,12 @@ def regime_mu_hat(var_p, regime, data, errors):
 
     for leaf_id in regime:
         mu_hat += data[leaf_id] / (var_p + errors[leaf_id])
-        normalizing_constant += 1. / (var_p + errors[leaf_id])
-    
+        normalizing_constant += 1.0 / (var_p + errors[leaf_id])
+
     if normalizing_constant < 1e-20:
         print(normalizing_constant, len(regime))
-    mu_hat = mu_hat/normalizing_constant
-    
+    mu_hat = mu_hat / normalizing_constant
+
     return mu_hat
 
 
@@ -184,11 +185,12 @@ def neglkl_regime_var_p(var_p, regime, data, errors):
     """negloglikelihood of var_p within a regime (using MLE for mu)."""
     mu_hat = regime_mu_hat(var_p, regime, data, errors)
     neglkl = 0
-    
+
     for leaf_id in regime:
-        neglkl += (0.5*np.log(2*np.pi*(var_p + errors[leaf_id]))
-            + (data[leaf_id] - mu_hat)**2 / (2*(var_p + errors[leaf_id])))
-    
+        neglkl += 0.5 * np.log(2 * np.pi * (var_p + errors[leaf_id])) + (
+            data[leaf_id] - mu_hat
+        ) ** 2 / (2 * (var_p + errors[leaf_id]))
+
     return neglkl
 
 
@@ -197,25 +199,25 @@ def neglkl_marginal_var_p(var_p, pulse_positions, tree, data, errors):
     """
     neglkl = 0
     grouped_leaf_ids = group_ids(group_by_regime(pulse_positions, tree))
-    
+
     for regime in grouped_leaf_ids:
         neglkl += neglkl_regime_var_p(var_p, regime, data, errors)
-    
+
     return neglkl
 
 
 def _neglkl_marginal_var_p_function(pulse_positions, tree, data, errors):
     """Return marginal var_p netloglikelihood _function_ to minimize."""
     grouped_leaf_ids = group_ids(group_by_regime(pulse_positions, tree))
-    
+
     def _f(var_p):
         neglkl = 0
         for regime in grouped_leaf_ids:
-            #print(var_p, regime, data, errors)
+            # print(var_p, regime, data, errors)
             neglkl += neglkl_regime_var_p(var_p, regime, data, errors)
-        
+
         return neglkl
-    
+
     return _f
 
 
@@ -297,8 +299,7 @@ def load_treefile_datafile(treefile, datafile, return_errors=False):
         return t, data, errors
 
 
-def pulse_negloglkl_fun(data, tree, leaves, burst_locations,
-                        error_variances=0):
+def pulse_negloglkl_fun(data, tree, leaves, burst_locations, error_variances=0):
     """Return a function which computes the pulse likelihood of the data,
 
     If there are VARIANCES on the data measurements, specify them by
@@ -329,7 +330,6 @@ def pulse_negloglkl_fun(data, tree, leaves, burst_locations,
         # Indicator of whether an edge is a leaf of not.
         leaf_array[leaves[i].id] = 1.0
 
-    
     # Write down order in which to compute the contrasts (i.e. postorder of
     # edges, without leaves), and the descendants of each edge.
     nodes_to_compute = []
@@ -383,21 +383,25 @@ def pulse_negloglkl_fun(data, tree, leaves, burst_locations,
             # if (var_i + var_j < 1e-60):
             #    return 1000
             # edge_variances[k] += var_i * var_j / (var_i + var_j)
-            edge_variances[k] += var_i*var_j / (var_i+var_j)
+            edge_variances[k] += var_i * var_j / (var_i + var_j)
 
             # Estimate trait at node k.
-            trait_at_node_copy[k] = ((trait_j*var_i + trait_i*var_j)
-                                        / (var_i + var_j))
+            trait_at_node_copy[k] = (trait_j * var_i + trait_i * var_j) / (
+                var_i + var_j
+            )
 
             diff_k = trait_at_node_copy[i] - trait_at_node_copy[j]
 
-            sum_of_logs += 0.5*(-diff_k*diff_k/(var_i+var_j)
-                - np.log(2*np.pi*(var_i+var_j)))
+            sum_of_logs += 0.5 * (
+                -diff_k * diff_k / (var_i + var_j)
+                - np.log(2 * np.pi * (var_i + var_j))
+            )
 
         # Contribution of most common ancestor is different.
         diff_top = 0
-        sum_of_logs += (-diff_top*diff_top/(2.0*edge_variances[-1])
-                        -0.5*np.log(2.0*np.pi*edge_variances[-1]))
+        sum_of_logs += -diff_top * diff_top / (
+            2.0 * edge_variances[-1]
+        ) - 0.5 * np.log(2.0 * np.pi * edge_variances[-1])
 
         # Return sum of logs of contributions + contribution of ancestor.
         # print(trait_at_node_copy[-1])
@@ -421,8 +425,6 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
     if isinstance(error_variances, Number):
         error_variances = error_variances * np.ones(len(data))
 
-
-
     # Set leaf trait values; rest will be updated later.
     trait_at_node = np.zeros(tree.id + 1)
     # 1 if edge with given id is a leaf.
@@ -436,7 +438,6 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
         # Indicator of whether an edge is a leaf of not.
         leaf_array[leaves[i].id] = 1.0
 
-    
     # Write down order in which to compute the contrasts (i.e. postorder of
     # edges, without leaves), and the descendants of each edge.
     nodes_to_compute = []
@@ -451,7 +452,7 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
     # This is what we will maximize and return max as "configuration
     # likelihood".
     # No BM variance at the top--but need to add a virtual 0-long edge.
-    distances = np.append(distances, [0.])
+    distances = np.append(distances, [0.0])
 
     def neg_log_lkl_function(var_p, var_bm, return_ml_mean=False):
         # if var_p, var_d < cutoff we return a very high negloglkl
@@ -462,7 +463,6 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
             return 500 * np.exp(-var_p)
         if var_bm < nm_cutoff:
             return 500 * np.exp(-var_bm)
-
 
         # Define variance matrix for this model
         edge_variances = var_p * leaf_array + var_bm * distances
@@ -494,16 +494,18 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
             # if (var_i + var_j < 1e-60):
             #    return 1000
             # edge_variances[k] += var_i * var_j / (var_i + var_j)
-            edge_variances[k] += var_i*var_j / (var_i+var_j)
+            edge_variances[k] += var_i * var_j / (var_i + var_j)
 
             # Estimate trait at node k.
-            trait_at_node_copy[k] = ((trait_j*var_i + trait_i*var_j)
-                                        / (var_i + var_j))
+            trait_at_node_copy[k] = (trait_j * var_i + trait_i * var_j) / (
+                var_i + var_j
+            )
 
             diff_k = trait_at_node_copy[i] - trait_at_node_copy[j]
 
-            sum_of_logs += (-diff_k*diff_k/(2*(var_i+var_j))
-                            - 0.5*np.log(2*np.pi*(var_i+var_j)))
+            sum_of_logs += -diff_k * diff_k / (
+                2 * (var_i + var_j)
+            ) - 0.5 * np.log(2 * np.pi * (var_i + var_j))
 
         # Contribution of most common ancestor is different.
         diff_top = 0
@@ -531,48 +533,47 @@ def bm_mle(data, tree, leaves, distances, error_variances=0):
 
     if isinstance(error_variances, Number):
         error_variances = error_variances * np.ones(len(data))
-    
-    data = (data - data_mean)/scaling
-    #data = (data - data.min())/scaling
-    errors = np.array(error_variances) / (scaling*scaling)
-    
+
+    data = (data - data_mean) / scaling
+    # data = (data - data.min())/scaling
+    errors = np.array(error_variances) / (scaling * scaling)
+
     # now minimize it
-    f = bm_negloglkl_fun(
-            data,
-            tree,
-            leaves,
-            distances,
-            error_variances=errors
+    f = bm_negloglkl_fun(data, tree, leaves, distances, error_variances=errors)
+    res = brute(
+        lambda x: f(x[0], x[1]), [[1e-30, 1], [0, 4]], Ns=180, full_output=1
     )
-    res = brute(lambda x:f(x[0], x[1]), [[1e-30,1], [0,4]], Ns=180, full_output=1)
 
     # find standard errors
-    #_f = bm_negloglkl_fun_withmu(data, tree, leaves, distances, errors)
-    #hess = numerical_hessian(lambda x:f(x[0], x[1], x[2]), [res[0][0], res[0][1], res[1]], eps=0.1)
-    #bm_vars = np.array(np.linalg.inv(hess).diagonal())
-    #bm_vars[0] = scaling*scaling*scaling*scaling*bm_vars[0]
-    #bm_vars[1] = scaling*scaling*scaling*scaling*bm_vars[1]
-    #bm_vars[2] = scaling*scaling*bm_vars[2]
-    
+    # _f = bm_negloglkl_fun_withmu(data, tree, leaves, distances, errors)
+    # hess = numerical_hessian(lambda x:f(x[0], x[1], x[2]), [res[0][0], res[0][1], res[1]], eps=0.1)
+    # bm_vars = np.array(np.linalg.inv(hess).diagonal())
+    # bm_vars[0] = scaling*scaling*scaling*scaling*bm_vars[0]
+    # bm_vars[1] = scaling*scaling*scaling*scaling*bm_vars[1]
+    # bm_vars[2] = scaling*scaling*bm_vars[2]
 
-    
-    rescaled_mean = scaling*f(res[0][0], res[0][1], True)[1] + data_mean
-    
-    k = 3 # num. of parameters
+    rescaled_mean = scaling * f(res[0][0], res[0][1], True)[1] + data_mean
+
+    k = 3  # num. of parameters
     n_data_points = len(data)
-    neglogL = res[1] + len(data)*np.log(scaling)
+    neglogL = res[1] + len(data) * np.log(scaling)
     aic = 2 * k + 2 * neglogL
     aic_c = aic + 2 * k * (k + 1) / (n_data_points - k - 1)
-    
-    return [
-    [scaling*scaling*res[0][0], scaling*scaling*res[0][1], rescaled_mean],
-    np.exp(-res[1])/(scaling**len(data)),
-    aic_c
-    ]
-    
 
-def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0,
-                    pois=False):
+    return [
+        [
+            scaling * scaling * res[0][0],
+            scaling * scaling * res[0][1],
+            rescaled_mean,
+        ],
+        np.exp(-res[1]) / (scaling ** len(data)),
+        aic_c,
+    ]
+
+
+def pulse_config_mle(
+    data, tree, leaves, pulse_config, error_variances=0, pois=False
+):
     # normalize the data
     data = np.array(data)
     data_mean = data.mean()
@@ -580,65 +581,66 @@ def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0,
 
     if isinstance(error_variances, Number):
         error_variances = error_variances * np.ones(len(data))
-    
-    data = (data - data_mean)/scaling
-    errors = np.array(error_variances) / (scaling*scaling)
+
+    data = (data - data_mean) / scaling
+    errors = np.array(error_variances) / (scaling * scaling)
 
     # find var_p
     f = _neglkl_marginal_var_p_function(pulse_config, tree, data, errors)
-    var_p_optimized = minimize_scalar(f, bounds=[0,1], method='Bounded').x
+    var_p_optimized = minimize_scalar(f, bounds=[0, 1], method="Bounded").x
 
-    #estimate var_d
+    # estimate var_d
     _g = pulse_negloglkl_fun(
-        data,
-        tree,
-        leaves,
-        pulse_config,
-        error_variances=errors
+        data, tree, leaves, pulse_config, error_variances=errors
     )
-    
+
     # negloglkl function with fixed var_p
-    _conditioned_lkl_vard = lambda x:_g(var_p_optimized,x)
+    _conditioned_lkl_vard = lambda x: _g(var_p_optimized, x)
     # find good guess for var_d
     res = minimize_scalar(
-            _conditioned_lkl_vard,
-            bounds=[0,4],
-            method='Bounded'
+        _conditioned_lkl_vard, bounds=[0, 4], method="Bounded"
     )
 
     # now run gradient descent to find MLEs for var_p and var_d
     res = minimize(
-        lambda x:_g(x[0], x[1]),
+        lambda x: _g(x[0], x[1]),
         [var_p_optimized, res.x],
-        bounds=[[1e-20,1],[1e-20,4]]
+        bounds=[[1e-20, 1], [1e-20, 4]],
     )
-    
-    rescaled_mean = scaling*_g(res.x[0], res.x[1], True)[1] + data_mean
-    
-    if pois==True:
+
+    rescaled_mean = scaling * _g(res.x[0], res.x[1], True)[1] + data_mean
+
+    if pois == True:
         total_time = 0
         for distance in distances:
             total_time += distance
-            
-    k = 3 # num. of parameters
-    
+
+    k = 3  # num. of parameters
+
     # add up pulses--each one as a pulse.
     for pulse in pulse_config:
         k += pulse[1]
-    
-    n_data_points = len(data)
-    neglogL = res.fun + len(data)*np.log(scaling)
-    aic = 2*k + 2*neglogL
-    aic_c = aic + 2*k*(k + 1)/(n_data_points - k - 1)
-    
-    return [[scaling*scaling*res.x[0], scaling*scaling*res.x[1], rescaled_mean],
-            np.exp(-res.fun)/(scaling**len(data)),
-            pulse_config,
-            aic_c,
-           ]
 
-def pulse_iterate_configs(data, tree, leaves, error_variances=0, max_n = 2,
-                            min_n = 0, n_processes=-1):
+    n_data_points = len(data)
+    neglogL = res.fun + len(data) * np.log(scaling)
+    aic = 2 * k + 2 * neglogL
+    aic_c = aic + 2 * k * (k + 1) / (n_data_points - k - 1)
+
+    return [
+        [
+            scaling * scaling * res.x[0],
+            scaling * scaling * res.x[1],
+            rescaled_mean,
+        ],
+        np.exp(-res.fun) / (scaling ** len(data)),
+        pulse_config,
+        aic_c,
+    ]
+
+
+def pulse_iterate_configs(
+    data, tree, leaves, error_variances=0, max_n=2, min_n=0, n_processes=-1
+):
     with Parallel(n_processes) as parallel:
         configurations = parallel(
             delayed(pulse_config_mle)(
@@ -649,7 +651,7 @@ def pulse_iterate_configs(data, tree, leaves, error_variances=0, max_n = 2,
 
     # Sort the list (minimal AIC_c first)
     configurations.sort(key=lambda x: x[3])
-    
+
     return configurations
 
 
@@ -681,11 +683,13 @@ def group_by_regime(pulses, tree):
                 continue
             else:
                 if equiv_classes[pos1] <= equiv_classes[pos2]:
-                    equiv_classes[pos2] = (equiv_classes[pos2] -
-                        equiv_classes[pos1])
+                    equiv_classes[pos2] = (
+                        equiv_classes[pos2] - equiv_classes[pos1]
+                    )
                 if equiv_classes[pos2] <= equiv_classes[pos1]:
-                    equiv_classes[pos1] = (equiv_classes[pos1] - 
-                        equiv_classes[pos2])
+                    equiv_classes[pos1] = (
+                        equiv_classes[pos1] - equiv_classes[pos2]
+                    )
 
     # Get rid of empties!
     to_remove = []
@@ -715,8 +719,7 @@ def group_ids(grouped_sets):
 
 def _pooled_var_p(grouped_ids, data):
     """Compute the pooled var_p, and the error of the estimated var_p."""
-    grouped_vals =\
-        [[data[id_val] for id_val in group] for group in grouped_ids]
+    grouped_vals = [[data[id_val] for id_val in group] for group in grouped_ids]
 
     numerator = 0.0
     denom = 0.0
