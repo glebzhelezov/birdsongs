@@ -5,48 +5,48 @@ leaves of an evolutionary tree, given a burst-on-edges model. A better name
 would be "Bursts On A Tree."
 
 Please direct questions and comments to Gleb Zhelezov and Jay McEntee.
-
-            ((
-            \\``.
-            \_`.``-. 
-            ( `.`.` `._  
-             `._`-.    `._ 
-               \`--.   ,' `. 
-                `--._  `.  .`. 
-                 `--.--- `. ` `. 
-                 `.--  `;  .`._ 
-                   :-   :   ;. `.__,.,__ __    First one in the family!
-                    `\  :       ,-(     ';o`>.  /
-                      `-.`:   ,'   `._ .:  (,-`,
-                     \    ;      ;.  ,: 
-                     ,"`-._>-:        ;,'  `---.,---.
-                     `>'"  "-`       ,'   "":::::".. `-.
-                      `;"'_,  (\`\ _ `:::::::::::'"     `---.
-                  -hrr-    `-(_,' -'),)\`.       _      .::::"'  `----._,-"")
-                       \_,': `.-' `-----' `--;-.   `.   ``.`--.____/ 
-                         `-^--'                \(-.  `.``-.`-=:-.__)
-                                            `  `.`.`._`.-._`--.)
-                                                 `-^---^--.`--
-            .
-            |\
-            | \
-            |  \
-            |   \
-            |    \
-            |     \ What a birdsong!
-            |      \       /
-            |       \     / ____O
-            |        \     .' ./
-            |   _.,-~"\  .',/~'
-            <-~"   _.,-~" ~ |
-^"~-,._.,-~"^"~-,._\       /,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-
-^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
-~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._
-
-(ASCII art found online.)
-
 """
+
+#         ((
+#         \\``.
+#         \_`.``-. 
+#         ( `.`.` `._  
+#          `._`-.    `._ 
+#            \`--.   ,' `. 
+#             `--._  `.  .`. 
+#              `--.--- `. ` `. 
+#              `.--  `;  .`._ 
+#                :-   :   ;. `.__,.,__ __    First one in the family!
+#                 `\  :       ,-(     ';o`>.  /
+#                   `-.`:   ,'   `._ .:  (,-`,
+#                  \    ;      ;.  ,: 
+#                  ,"`-._>-:        ;,'  `---.,---.
+#                  `>'"  "-`       ,'   "":::::".. `-.
+#                   `;"'_,  (\`\ _ `:::::::::::'"     `---.
+#               -hrr-    `-(_,' -'),)\`.       _      .::::"'  `----._,-"")
+#                    \_,': `.-' `-----' `--;-.   `.   ``.`--.____/ 
+#                      `-^--'                \(-.  `.``-.`-=:-.__)
+#                                         `  `.`.`._`.-._`--.)
+#                                              `-^---^--.`--
+#            .
+#            |\
+#            | \
+#            |  \
+#            |   \
+#            |    \
+#            |     \ What a birdsong!
+#            |      \       /
+#            |       \     / ____O
+#            |        \     .' ./
+#            |   _.,-~"\  .',/~'
+#            <-~"   _.,-~" ~ |
+#^"~-,._.,-~"^"~-,._\       /,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
+#~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-
+#^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,.
+#~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._.,-~"^"~-,._
+#
+#(ASCII art found online.)
+
 
 import numpy as np
 from scipy.stats import multivariate_normal
@@ -64,7 +64,7 @@ from datetime import datetime
 from numbers import Number
 
 def number_leaves(in_tree):
-    """Number the leaves, count their total number, and create a list of pointers to each leaf.
+    """Number the leaves, count their total number, and create a list.
 
     Returns n_leaves, leaves, where:
     n_leave - total number of leaves
@@ -81,10 +81,8 @@ def number_leaves(in_tree):
 
 
 def number_edges(in_tree):
-    """Get total number of edges, number them, and create a list of pointers to each edge.
+    """Get total number of edges, number them, and create a list.
     
-    ** Update 28/03/2019: We now add an id to the top node, but don't count it!
-    ** This is to simplify calculations by increments!
     We associate with each node the edge above it, and exclude the root node.
     node[] gives the node, given the id; node.id gives the id, given the node.
     We compute the sum of all the distances, to make burst probability
@@ -119,7 +117,8 @@ def number_edges(in_tree):
 def iter_ancestors(node):
     """Generator for all ancestors of a given node, excluding root node.
 
-    This is used to find the common ancestry, in order to compute the covariance between leaves.
+    This is used to find the common ancestry, in order to compute the
+    covariance between leaves.
     """
     while node.up != None:
         yield node
@@ -129,8 +128,9 @@ def iter_ancestors(node):
 def burst_configs(n_edges, max_bursts, min_bursts=0):
     """Generator which returns locations of bursts.
 
-    Returns a list of this sort: [(edge #, # of bursts on edge), ..., (edge #, # bursts)]. List only
-    includes tuples with nonzero numbers of bursts.
+    Returns a list of this sort: [(edge #, # of bursts on edge), ...,
+    (edge #, # bursts)]. List only includes tuples with nonzero numbers of
+    bursts.
     """
 
     for n_bursts in range(min_bursts, max_bursts + 1):
@@ -150,7 +150,9 @@ def burst_configs(n_edges, max_bursts, min_bursts=0):
 
 
 def decorate_tree(input_tree):
-    """Labels all the nodes and edges on the graph of a processed tree. Call input_tree.show() to see."""
+    """Labels all the nodes and edges on the graph of a processed tree.
+    Call input_tree.show() to see.
+    """
     for node in input_tree.iter_descendants():
         node.add_face(TextFace(node.id), column=0, position="branch-top")
 
@@ -295,7 +297,8 @@ def load_treefile_datafile(treefile, datafile, return_errors=False):
         return t, data, errors
 
 
-def pulse_negloglkl_fun(data, tree, leaves, burst_locations, error_variances=0):
+def pulse_negloglkl_fun(data, tree, leaves, burst_locations,
+                        error_variances=0):
     """Return a function which computes the pulse likelihood of the data,
 
     If there are VARIANCES on the data measurements, specify them by
@@ -328,13 +331,13 @@ def pulse_negloglkl_fun(data, tree, leaves, burst_locations, error_variances=0):
 
     
     # Write down order in which to compute the contrasts (i.e. postorder of
-    # edges, without leaves), and the left and right descendants of each edge.
+    # edges, without leaves), and the descendants of each edge.
     nodes_to_compute = []
 
     for node in tree.traverse("postorder"):
         if node.is_leaf() == False:
             childs = node.get_children()
-            # Note: Here we are making the assumption that we have a binary tree!
+            # Note: We are making the assumption that we have a binary tree!
             nodes_to_compute.append([node.id, childs[0].id, childs[1].id])
 
     # The likelihood of the given configuration, given mu, var_p, and var_d.
@@ -380,24 +383,21 @@ def pulse_negloglkl_fun(data, tree, leaves, burst_locations, error_variances=0):
             # if (var_i + var_j < 1e-60):
             #    return 1000
             # edge_variances[k] += var_i * var_j / (var_i + var_j)
-            edge_variances[k] += var_i * var_j / (var_i + var_j)
+            edge_variances[k] += var_i*var_j / (var_i+var_j)
 
             # Estimate trait at node k.
-            trait_at_node_copy[k] = (trait_j * var_i + trait_i * var_j) / (
-                var_i + var_j
-            )
+            trait_at_node_copy[k] = ((trait_j*var_i + trait_i*var_j)
+                                        / (var_i + var_j))
 
             diff_k = trait_at_node_copy[i] - trait_at_node_copy[j]
 
-            sum_of_logs += -diff_k * diff_k / (2 * (var_i + var_j)) - 0.5 * np.log(
-                2 * np.pi * (var_i + var_j)
-            )
+            sum_of_logs += 0.5*(-diff_k*diff_k/(var_i+var_j)
+                - np.log(2*np.pi*(var_i+var_j)))
 
         # Contribution of most common ancestor is different.
         diff_top = 0
-        sum_of_logs += -diff_top * diff_top / (
-            2.0 * edge_variances[-1]
-        ) + -0.5 * np.log(2.0 * np.pi * edge_variances[-1])
+        sum_of_logs += (-diff_top*diff_top/(2.0*edge_variances[-1])
+                        -0.5*np.log(2.0*np.pi*edge_variances[-1]))
 
         # Return sum of logs of contributions + contribution of ancestor.
         # print(trait_at_node_copy[-1])
@@ -438,13 +438,13 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
 
     
     # Write down order in which to compute the contrasts (i.e. postorder of
-    # edges, without leaves), and the left and right descendants of each edge.
+    # edges, without leaves), and the descendants of each edge.
     nodes_to_compute = []
 
     for node in tree.traverse("postorder"):
         if node.is_leaf() == False:
             childs = node.get_children()
-            # Note: Here we are making the assumption that we have a binary tree!
+            # Note: Assume a binary tree!
             nodes_to_compute.append([node.id, childs[0].id, childs[1].id])
 
     # The likelihood of the given configuration, given mu, var_p, and var_d.
@@ -494,18 +494,16 @@ def bm_negloglkl_fun(data, tree, leaves, distances, error_variances=0):
             # if (var_i + var_j < 1e-60):
             #    return 1000
             # edge_variances[k] += var_i * var_j / (var_i + var_j)
-            edge_variances[k] += var_i * var_j / (var_i + var_j)
+            edge_variances[k] += var_i*var_j / (var_i+var_j)
 
             # Estimate trait at node k.
-            trait_at_node_copy[k] = (trait_j * var_i + trait_i * var_j) / (
-                var_i + var_j
-            )
+            trait_at_node_copy[k] = ((trait_j*var_i + trait_i*var_j)
+                                        / (var_i + var_j))
 
             diff_k = trait_at_node_copy[i] - trait_at_node_copy[j]
 
-            sum_of_logs += -diff_k * diff_k / (2 * (var_i + var_j)) - 0.5 * np.log(
-                2 * np.pi * (var_i + var_j)
-            )
+            sum_of_logs += (-diff_k*diff_k/(2*(var_i+var_j))
+                            - 0.5*np.log(2*np.pi*(var_i+var_j)))
 
         # Contribution of most common ancestor is different.
         diff_top = 0
@@ -539,7 +537,13 @@ def bm_mle(data, tree, leaves, distances, error_variances=0):
     errors = np.array(error_variances) / (scaling*scaling)
     
     # now minimize it
-    f = bm_negloglkl_fun(data, tree, leaves, distances, error_variances=errors)
+    f = bm_negloglkl_fun(
+            data,
+            tree,
+            leaves,
+            distances,
+            error_variances=errors
+    )
     res = brute(lambda x:f(x[0], x[1]), [[1e-30,1], [0,4]], Ns=180, full_output=1)
 
     # find standard errors
@@ -567,7 +571,8 @@ def bm_mle(data, tree, leaves, distances, error_variances=0):
     ]
     
 
-def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0, pois=False):
+def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0,
+                    pois=False):
     # normalize the data
     data = np.array(data)
     data_mean = data.mean()
@@ -595,24 +600,29 @@ def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0, pois=F
     # negloglkl function with fixed var_p
     _conditioned_lkl_vard = lambda x:_g(var_p_optimized,x)
     # find good guess for var_d
-    res = minimize_scalar(_conditioned_lkl_vard, bounds=[0,4], method='Bounded')
+    res = minimize_scalar(
+            _conditioned_lkl_vard,
+            bounds=[0,4],
+            method='Bounded'
+    )
 
     # now run gradient descent to find MLEs for var_p and var_d
-    res = minimize(lambda x:_g(x[0], x[1]), [var_p_optimized, res.x], bounds=[[1e-20,1],[1e-20,4]])
+    res = minimize(
+        lambda x:_g(x[0], x[1]),
+        [var_p_optimized, res.x],
+        bounds=[[1e-20,1],[1e-20,4]]
+    )
     
     rescaled_mean = scaling*_g(res.x[0], res.x[1], True)[1] + data_mean
-
     
     if pois==True:
         total_time = 0
         for distance in distances:
             total_time += distance
             
-    
-    
     k = 3 # num. of parameters
     
-    # add up pulses
+    # add up pulses--each one as a pulse.
     for pulse in pulse_config:
         k += pulse[1]
     
@@ -620,7 +630,6 @@ def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0, pois=F
     neglogL = res.fun + len(data)*np.log(scaling)
     aic = 2*k + 2*neglogL
     aic_c = aic + 2*k*(k + 1)/(n_data_points - k - 1)
-    #bic = np.log(len(data))*k + 2*neglogL
     
     return [[scaling*scaling*res.x[0], scaling*scaling*res.x[1], rescaled_mean],
             np.exp(-res.fun)/(scaling**len(data)),
@@ -628,7 +637,8 @@ def pulse_config_mle(data, tree, leaves, pulse_config, error_variances=0, pois=F
             aic_c,
            ]
 
-def pulse_iterate_configs(data, tree, leaves, error_variances=0, max_n = 2, min_n = 0, n_processes=-1):
+def pulse_iterate_configs(data, tree, leaves, error_variances=0, max_n = 2,
+                            min_n = 0, n_processes=-1):
     with Parallel(n_processes) as parallel:
         configurations = parallel(
             delayed(pulse_config_mle)(
@@ -691,7 +701,7 @@ def group_by_regime(pulses, tree):
 
 
 def group_ids(grouped_sets):
-    """Returns list of lists, each inner list containing leaf IDs in regimes."""
+    """Returns list of lists, each inner one containing regime's leaf IDs."""
     groups = []
 
     for group_key, group in grouped_sets.items():
@@ -704,8 +714,9 @@ def group_ids(grouped_sets):
 
 
 def _pooled_var_p(grouped_ids, data):
-    """Compute the pooled var_p, and the variance (error) of the estimated var_p."""
-    grouped_vals = [[data[id_val] for id_val in group] for group in grouped_ids]
+    """Compute the pooled var_p, and the error of the estimated var_p."""
+    grouped_vals =\
+        [[data[id_val] for id_val in group] for group in grouped_ids]
 
     numerator = 0.0
     denom = 0.0
