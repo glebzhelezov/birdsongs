@@ -5,7 +5,7 @@ from scipy.optimize import minimize, minimize_scalar
 from scipy import stats
 from scipy.special import binom
 import numpy as np
-import boat
+import boat_legacy_matrix as boat_legacy
 import boat_submission
 from joblib import Parallel, delayed
 from ete3 import Tree
@@ -20,7 +20,9 @@ import sys
 print(
     """Generating synthetic data + fitting models to it. Usage:
 
-$ {} pickel_filename.p""".format(
+$ {} pickle_filename.p
+----------------------------------------------------
+""".format(
         sys.argv[0]
     )
 )
@@ -75,7 +77,7 @@ def aicc_diff_from_bm_data(
         rand_var_bm = np.random.uniform(var_bm_min, var_bm_max)
         rand_var_p = np.random.uniform(var_p_min, var_p_max)
 
-        rand_cov_matrix = boat.build_bm_cov_matrix(
+        rand_cov_matrix = boat_legacy.build_bm_cov_matrix(
             tree, leaves, rand_var_p, rand_var_bm
         )
 
@@ -174,7 +176,7 @@ def aicc_diff_from_pulse_data(
         rand_var_d = np.random.uniform(var_d_min, var_d_max)
         rand_var_p = np.random.uniform(var_p_min, var_p_max)
 
-        rand_cov_matrix = boat.build_cov_matrix(
+        rand_cov_matrix = boat_legacy.build_cov_matrix(
             tree, leaves, rand_pulses, rand_var_p, rand_var_d
         )
 
@@ -243,7 +245,7 @@ for analysis in all_analyses[0]:
 tree_filename = "UPGMA_song_match_2_Shen_to_South.nwk"
 tree = Tree(tree_filename)
 # number of datasets to generate
-n_datasets = 1000
+n_datasets = 2 #1000
 relative_meas_error_min = 0
 relative_meas_error_max = 0.3
 n_samples_min = 2
@@ -338,7 +340,7 @@ for i in range(n_analyses):
     temp.sort()
     cutoff_pulse = temp[int((1 - cutoff_fraction) * len(temp))]
 
-    print(data_file, cutoff_bm, cutoff_pulse, sep=",")
+    print(data_filenames[i], cutoff_bm, cutoff_pulse, sep=",")
 
 param_labels = [
     "n_synthetic_datasets",
