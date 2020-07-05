@@ -1,8 +1,3 @@
-#import boat
-import boat_submission as boat 
-import boat_draw_bursts
-import important_settings
-
 import glob
 from scipy.optimize import minimize, minimize_scalar
 from scipy import stats
@@ -20,6 +15,10 @@ import io
 import csv
 import time
 import sys
+
+import boat_submission as boat 
+import boat_draw_bursts
+import important_settings
 
 datafiles = glob("*.csv")
 nwkfiles = glob("*.nwk")
