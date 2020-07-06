@@ -105,8 +105,8 @@ def high_performance_flight_simulator():
         current_hs = "2500"
         current_hs_holder = "River" 
 
-    if not current_hs[:-2].isnumeric():
-        print("Not numeric")
+    if not current_hs.rstrip().isnumeric():
+        print("Corrupt score file. Resetting to previous champion.")
         current_hs = 2500
         current_hs_holder = "River"
     else:
